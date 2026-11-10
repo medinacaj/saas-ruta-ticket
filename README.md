@@ -19,18 +19,18 @@ Boletería destinada a operadores terrestres y marítimos, producto **independie
 
 Con Python 3 y un navegador actual:
 
-\`\`\`sh
+```sh
 python3 -m http.server 8080
-\`\`\`
+```
 
 Abrir **http://localhost:8080**.
 
 Con Node.js 20+ (sin instalación de dependencias):
 
-\`\`\`sh
+```sh
 npm test
 npm run check
-\`\`\`
+```
 
 La validación en navegador real está pendiente en esta entrega.
 
