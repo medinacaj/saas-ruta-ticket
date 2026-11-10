@@ -29,3 +29,11 @@
 
 ## Gobierno
 Este producto es comercialmente independiente de PaseListo. La base actual permite revisión de flujos, no vende pasajes. El repositorio es público en GitHub al comienzo de esta etapa; utilizar únicamente código y datos ficticios. Revisión humana mediante PR, sin cambio de visibilidad, hosting, secretos ni proveedores externos.
+
+
+## Avance adicional: backend local y GitHub Pages
+
+- Vista web de RutaTicket publicada mediante rama `gh-pages`: https://medinacaj.github.io/saas-ruta-ticket/.
+- Estado ficticio de interfaz guardado localmente en el navegador; sin compartir información entre dispositivos.
+- API de desarrollo Node.js en `server/` con token por tenant, rutas de lectura/mutación, JSON en disco y cola serializada por proceso, idempotencia opcional y pruebas HTTP. **La API no está conectada al frontend de Pages** porque GitHub Pages no ejecuta backends.
+- Pendiente migrar el servicio a PostgreSQL transaccional con RLS, seguridad real, MFA, auditoría inmutable, backups, cobros autorizados y verificación normativa.
