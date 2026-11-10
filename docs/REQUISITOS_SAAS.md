@@ -1,4 +1,4 @@
-# Requisitos SaaS — Boletería Digital — Transporte (#21)
+# Requisitos SaaS — Boletería Digital — Transporte (#22)
 
 > **Decisión de producto:** herramienta SaaS comercial independiente, aprobada el 9 de noviembre de 2026.  
 > **Estado actual:** MVP local de demostración v0.1 en PR (CI de reglas aprobada); aún sin autenticación, base de datos, pagos, clientes reales ni producción.  
