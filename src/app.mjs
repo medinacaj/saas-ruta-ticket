@@ -1,6 +1,7 @@
 import { seedDemo, createTrip, occupiedSeats, sellSeat, boardTicket, cancelTicket, summary, closeCash } from "./domain.mjs";
+import { loadDemo, saveDemo, clearDemo } from "./storage.mjs";
 
-const state = seedDemo();
+let state = loadDemo("rutaticket", seedDemo);
 let tenantId = state.tenants[0].id;
 let tripId = "trip-c1";
 let activeSeat = 1;
@@ -13,6 +14,7 @@ const humanDate = (s) => { const d = new Date(s); return Number.isNaN(d.getTime(
 function feedback(text, isError = false) { message = text; error = isError; render(); }
 function run(action, success) { try { action(); feedback(success); } catch (e) { feedback(e.message, true); } }
 function render() {
+  saveDemo("rutaticket", state);
   const trips = state.trips.filter((t) => t.tenantId === tenantId);
   if (!trips.some((t) => t.id === tripId)) { tripId = trips[0]?.id || ""; activeSeat = 1; }
   const trip = trips.find((t) => t.id === tripId);
@@ -26,9 +28,9 @@ function render() {
     '<div class="side-label">OPERADOR DE DEMOSTRACIÓN</div><label for="tenant">Empresa operadora</label><select id="tenant" class="field">' +
     state.tenants.map((o) => '<option value="' + esc(o.id) + '"' + (o.id === tenantId ? " selected" : "") + '>' + esc(o.name) + '</option>').join("") +
     '</select><nav aria-label="Secciones"><a class="nav-active" href="#contenido">Vista general</a><a href="#salidas">Salidas</a><a href="#boletos">Asientos y boletos</a><a href="#caja">Caja</a></nav>' +
-    '<div class="side-note">Operadores y viajes sintéticos. El selector solo sirve para probar vistas separadas: no autentica.</div></aside>' +
+    '<div class="side-note">Operadores y viajes sintéticos. El selector solo sirve para probar vistas separadas: no autentica.</div><button type="button" class="reset-demo" data-reset-demo>Restablecer demo</button></aside>' +
     '<main id="contenido" class="main"><div class="top"><div><p class="eyebrow">CENTRO DE BOLETERÍA</p><h1>Control de salidas</h1><p class="subtitle">Organiza rutas, asigna asientos y registra caja de prueba.</p></div><div class="top-chip">Versión 0.1 · demo</div></div>' +
-    '<div class="warning" role="note"><strong>Entorno demostrativo</strong> · Sin pasajeros reales, cobros ni reservas. Datos solo en memoria; no hay autenticación, sincronización ni emisión fiscal.</div>' +
+    '<div class="warning" role="note"><strong>Entorno demostrativo</strong> · Sin pasajeros reales, cobros ni reservas. Datos ficticios guardados solo en este navegador; no hay autenticación, sincronización ni emisión fiscal.</div>' +
     (message ? '<p class="' + (error ? "notice error" : "notice") + '" role="status">' + esc(message) + '</p>' : "") +
     '<section class="metrics" aria-label="Indicadores"><article><span>Salidas</span><strong>' + total.departures + '</strong><small>De este operador</small></article>' +
     '<article><span>Boletos activos</span><strong>' + total.sold + '</strong><small>Sin anulados</small></article>' +
@@ -68,5 +70,16 @@ app.addEventListener("submit", (ev) => {
   if (ev.target.id === "new-ticket") run(() => sellSeat(state, tenantId, tripId, activeSeat, data.alias), "Asiento de prueba emitido; no se realizó ningún pago.");
   if (ev.target.id === "boarding") run(() => boardTicket(state, tenantId, data.code), "Embarque de prueba validado.");
   if (ev.target.id === "close-cash" && confirm("El cierre de caja impedirá más ventas y anulaciones en esta sesión demo. ¿Continuar?")) run(() => closeCash(state, tenantId, data.declared), "Caja demostrativa cerrada; diferencia calculada.");
+});
+app.addEventListener("click", (ev) => {
+  if (ev.target.closest("[data-reset-demo]")) {
+    if (confirm("¿Restablecer los datos ficticios de esta demostración?")) {
+      clearDemo("rutaticket");
+      state = seedDemo();
+      tenantId = state.tenants[0].id;
+      tripId = ""; activeSeat = 1;
+      feedback("Demostración restablecida.");
+    }
+  }
 });
 render();
