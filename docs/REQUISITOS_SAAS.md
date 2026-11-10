@@ -48,4 +48,4 @@
 
 ## Identificación del repositorio
 
-Repositorio de producto: `medinacaj/saas-rutaticket`. Fuente histórica: `medinacaj/MediOS/docs/saas/BOLETERIA_TRANSPORTE.md`. Estas instrucciones no demuestran funcionalidades implementadas.
+Repositorio de producto: `medinacaj/saas-ruta-ticket`. Fuente histórica: `medinacaj/MediOS/docs/saas/BOLETERIA_TRANSPORTE.md`. Estas instrucciones no demuestran funcionalidades implementadas.
