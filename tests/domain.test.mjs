@@ -50,3 +50,19 @@ test("validaciones de salida y tenant", () => {
   assert.equal(trip.tenantId, "operador-lago");
   assert.throws(() => occupiedSeats(s, "operador-costa", trip.id), /inexistente/);
 });
+
+test("salidas DEMO rechazan fechas imposibles y horarios fuera de rango", () => {
+  const s=seedDemo();
+  const baseline={origin:"Caracas",destination:"Valencia",mode:"Terrestre",seats:10,fare:100};
+  const invalid=[
+    "2027-02-29T08:00", "2027-02-30T08:00", "2027-04-31T08:00",
+    "2027-13-10T08:00", "2027-00-10T08:00", "2027-01-00T08:00",
+    "2027-10-10T24:00", "2027-10-10T12:60", "2027-10-10T99:59",
+    "2027-1-10T08:00", "2027-10-10 08:00", "2000-01-01T08:00"
+  ];
+  for (const departure of invalid)
+    assert.throws(()=>createTrip(s,"operador-costa",{...baseline,departure}),/Fecha y hora inválidas/,departure);
+  const valid=createTrip(s,"operador-costa",{...baseline,departure:"2028-02-29T23:59"});
+  assert.equal(valid.departure,"2028-02-29T23:59");
+  assert.equal(s.trips.filter(x=>x.tenantId==="operador-costa").length,3);
+});
