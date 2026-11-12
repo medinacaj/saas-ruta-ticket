@@ -14,6 +14,14 @@ const tripFor = (state, tenantId, id) => {
 };
 const cashFor = (state, tenantId) => state.cash.find((c) => c.tenantId === tenantId) || fail("Caja no encontrada");
 const record = (state, tenantId, action, ref) => state.audit.unshift({ id: uid(), tenantId, action, ref, at: now() });
+// Pure calendar validation: Date.parse may normalize impossible local dates.
+const departureIsValid = value => {
+  const match=/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})$/.exec(value);
+  if (!match) return false;
+  const [,year,month,day,hour,minute]=match.map(Number);
+  if (year<2025||year>2099||month<1||month>12||hour>23||minute>59||day<1) return false;
+  return day<=new Date(Date.UTC(year,month,0)).getUTCDate();
+};
 
 export function seedDemo() {
   return {
@@ -44,7 +52,7 @@ export function createTrip(state, tenantId, input) {
   const seats = Number(input.seats), fare = Number(input.fare), departure = String(input.departure || "");
   if (!Number.isSafeInteger(seats) || seats < 1 || seats > 80) fail("Capacidad inválida (1 a 80)");
   if (!Number.isSafeInteger(fare) || fare < 0 || fare > 100000000) fail("Tarifa de demostración inválida");
-  if (!/^\d{4}-\d\d-\d\dT\d\d:\d\d$/.test(departure) || Number.isNaN(Date.parse(departure))) fail("Fecha y hora inválidas");
+  if (!departureIsValid(departure)) fail("Fecha y hora inválidas");
   const mode = String(input.mode || "");
   if (!["Terrestre", "Marítimo"].includes(mode)) fail("Modalidad inválida");
   const trip = {
